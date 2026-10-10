@@ -1,15 +1,27 @@
-require('dotenv').config()
-const express = require('express')
-const cors = require('cors')
+const dns = require('dns');
+dns.setServers(['8.8.8.8', '1.1.1.1']);
 
-const app = express()
-const PORT = process.env.PORT || 3001
+require("dotenv").config();
+const express = require("express");
+const cors = require("cors");
+const conectarDB = require("./config/db");
 
-app.use(cors({ origin: process.env.CORS_ORIGIN || 'http://localhost:5173' }))
-app.use(express.json())
+const app = express();
 
-app.get('/', (req, res) => {
-  res.json({ ok: true, msg: 'Servidor funcionando' })
-})
+// Middlewares
+app.use(cors({ origin: "http://localhost:5173" }));
+app.use(express.json());
 
-app.listen(PORT, () => console.log(`Servidor en http://localhost:${PORT}`))
+// Rutas
+app.get("/api/health", (req, res) => res.json({ ok: true }));
+app.use("/api/users", require("./routes/users"));
+
+// Arranque: primero conecta a la base, después levanta el servidor
+const iniciar = async () => {
+    await conectarDB();
+    app.listen(process.env.PORT, () =>
+        console.log(`Servidor en http://localhost:${process.env.PORT}`)
+    );
+};
+
+iniciar();
