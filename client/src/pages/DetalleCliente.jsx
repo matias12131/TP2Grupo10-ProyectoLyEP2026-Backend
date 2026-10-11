@@ -8,12 +8,36 @@ const DetalleCliente = () => {
   const navigate = useNavigate();
   const role = localStorage.getItem("role");
 
-  const [cliente, setCliente] = useState(null);
-  const [mensaje, setMensaje] = useState("");
+const [cliente, setCliente] = useState(null);
+const [mensaje, setMensaje] = useState("");
+const [error, setError] = useState("");
+const [cargando, setCargando] = useState(true);
 
   useEffect(() => {
-  clientesService.obtenerCliente(id)
-    .then((data) => setCliente(data));
+    const cargarCliente = async () => {
+        setCargando(true);
+        setError("");
+        setCliente(null);
+
+        try {
+            const data = await clientesService.obtenerCliente(id);
+            setCliente(data);
+        } catch (err) {
+            if (err.response?.status === 404) {
+                setError("El cliente solicitado no existe.");
+            } else if (err.response?.status === 400) {
+                setError("El identificador del cliente no es válido.");
+            } else {
+                setError(
+                    "No se pudo cargar el cliente. Intente nuevamente."
+                );
+            }
+        } finally {
+            setCargando(false);
+        }
+    };
+
+    cargarCliente();
 }, [id]);
 
 const eliminarCliente = async () => {
@@ -31,9 +55,24 @@ const eliminarCliente = async () => {
       setMensaje("Error al eliminar cliente");
     }
   };
-  if (!cliente) {
+  if (cargando) {
     return <h2>Cargando cliente...</h2>;
-  }
+}
+
+if (error && !cliente) {
+    return (
+        <div className="detalle-cliente">
+            <p role="alert">{error}</p>
+            <button onClick={() => navigate("/clientes")}>
+                Volver a clientes
+            </button>
+        </div>
+    );
+}
+
+if (!cliente) {
+    return <p role="alert">No se encontró el cliente.</p>;
+}
 
   return (
     <div className="detalle-cliente">
