@@ -23,6 +23,7 @@ clienteSchema.set("toJSON", {
     versionKey: false,
     transform: (doc, ret) => {
         delete ret._id;
+        delete ret.password;
     },
 });
 
