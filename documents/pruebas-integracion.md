@@ -35,7 +35,27 @@ Verificar la integración entre el frontend desarrollado con React y Vite, el ba
 - La comprobación de formato con Prettier no pasó: detectó problemas de formato en 12 archivos. Este resultado no demuestra por sí solo errores funcionales; queda pendiente decidir si se corrige el formato.
 - No se ejecutó el script de carga inicial (`seed.js`) durante las pruebas de integración.
 
-## 5. Conclusión
+### 5. Pruebas automatizadas con Vitest
+
+Se incorporó Vitest al frontend desarrollado con React y Vite, junto con React Testing Library y jsdom para probar componentes.
+
+**Ejecución:** `npm run test -- --run`
+
+**Resultado:** 8 pruebas aprobadas, distribuidas en 2 archivos de prueba.
+
+**Casos verificados:**
+- Visualización del indicador de carga del cliente.
+- Visualización de los datos de un cliente.
+- Manejo de errores HTTP 400 y 404.
+- Mensaje ante un error general de consulta.
+- Visualización del botón de eliminación para el rol Gerencia.
+- Comprobaciones iniciales de datos de prueba.
+
+Las llamadas al servicio de clientes se simularon durante las pruebas del componente, por lo que estas verificaciones no representan pruebas directas de integración con MongoDB ni con el backend real.
+
+Las pruebas manuales de integración se documentan por separado.
+
+## 6. Conclusión
 
 Las pruebas manuales permitieron verificar la comunicación entre React, Express y MongoDB para las operaciones principales de consulta, visualización, creación y eliminación de clientes.
 
